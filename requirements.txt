@@ -10,11 +10,13 @@ email-validator==2.0.0.post2
 exceptiongroup==1.2.2
 fastapi==0.103.2
 filelock==3.12.2
+gunicorn==23.0.0
 h11==0.14.0
 httptools==0.6.0
 idna==3.8
 importlib-metadata==6.7.0
 motor==3.4.0
+packaging==24.0
 passlib==1.7.4
 platformdirs==4.0.0
 pyasn1==0.5.1
