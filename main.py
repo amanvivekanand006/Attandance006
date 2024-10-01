@@ -3,10 +3,6 @@ from pymongo import MongoClient
 from pydantic import BaseModel,EmailStr
 from typing import Optional
 from passlib.context import CryptContext
-from mangum import Mangum
-
-
-
 
 
 
@@ -80,4 +76,4 @@ def logging(email: str = Query(...,), password : str = Query(...,)):
 
 
 
-handler = Mangum(app)
+
