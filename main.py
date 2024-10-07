@@ -3,11 +3,19 @@ from pymongo import MongoClient
 from pydantic import BaseModel,EmailStr
 from typing import Optional
 from passlib.context import CryptContext
-
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # List of allowed origins
+    allow_credentials=True,  # Allows credentials (such as cookies, authorization headers, etc.) to be sent in cross-origin requests
+    allow_methods=["*"],  # Allows all methods (such as GET, POST, DELETE, etc.)
+    allow_headers=["*"],  # Allows all headers
+    expose_headers=["*"]
+)
 
 
 Mongo_Details = "mongodb+srv://amanvivekanand:aman994909@cluster0.nszektx.mongodb.net/"
@@ -74,6 +82,34 @@ def logging(email: str = Query(...,), password : str = Query(...,)):
          return f"Message: Account Does not Exist"
      
 
+#-----------------------------------------------------------------------forgot password--------------------------------------------------------------------------------#
+
+class Changepassword(BaseModel):
+     password:str
+     confirm_password:str
 
 
+@app.patch("/changepassword", tags=["customer"])
+def changepassword(changepassword: Changepassword, email:EmailStr = Query(...,)):
+     if registr_col.find_one({"email":email}):
+          document = changepassword.dict()
+          document.update({
+               "password":get_password_hash(changepassword.password),
+               "confirm_password" : get_password_hash(changepassword.confirm_password)
+          })
+          registr_col.find_one_and_update({"email":email},{"$set":document })
+          return f"Message : Password Changed Sucessfull"
+     else:
+          return f"Message : Email Id Does Not Exist"
+     
 
+@app.get("/get all register users", tags=["customer"])
+def get_all_user():
+    documents =  registr_col.find()
+    all_users = []
+    
+    for document in documents:
+        document["_id"] = str(document["_id"])  # Convert ObjectId to string
+        all_users.append(document)  # Add the processed document to the list
+    
+    return all_users
